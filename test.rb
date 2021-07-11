@@ -543,3 +543,191 @@ ary = []
 end
 p ary
 puts '------------ END ------------'
+
+
+# String#hexは文字列を16進数で解釈して、整数で返します。16進数で解釈できない場合は0を返します。
+# String#octは文字列を8進数で解釈して、整数で返します。8進数で解釈できない場合は0を返します。
+puts '----------- 547行目 -----------'
+puts "0x90".hex
+puts '100'.oct
+puts '------------ END ------------'
+
+
+# フォーマット文字列	意味
+# %x	日付(%m/%d/%y)
+# %m	月を表す数字(01-12)
+# %M	分(00-59)
+# %d	日(01-31)
+# %D	日付(%m/%d/%y)
+# %y	西暦の下2桁(00-99)
+# %Y	西暦を表す数(9999)
+puts '----------- 555行目 -----------'
+require "date"
+d = Date.new(2015, 1, 5)
+puts d.strftime("%x") # => 01/05/15
+puts d.strftime("%m") # => 01
+puts d.strftime("%M") # => 00
+puts d.strftime("%d") # => 05
+puts d.strftime("%D") # => 01/05/15
+puts d.strftime("%m/%d/%y") # => 01/05/15
+puts d.strftime("%m/%d/%Y") # => 05/01/2015
+puts '------------ END ------------'
+
+
+# StandardErrorを継承しないクラスのインスタンスをraiseメソッドの引数に指定すると、TypeErrorが発生
+puts '----------- 578行目 -----------'
+# raise ['Error Message'] #=> exception class/object expected (TypeError)
+puts '------------ END ------------'
+
+puts '----------- 582行目 -----------'
+puts Date.today.to_s
+puts Date.today.strftime("%Y-%m-%d")
+puts '------------ END ------------'
+
+# 空のHashオブジェクトを生成するにはHash({}), {}, Hash.newのいずれかを用います。
+# Hash#to_hは2次元配列からハッシュを生成します。例えば[[1, "data 1"], [2, "data 2"]].to_hの結果は{1=>"data 1", 2=>"data 2"}になります。
+# Hash#mergeはselfと引数のハッシュをマージし、新しいHashを返します。Hash#mergeは非破壊的メソッドです。
+# Hash#clearはselfより要素を全て取り除きます。Hash#clearは破壊的メソッドです。
+puts '----------- 592行目 -----------'
+puts a = Hash({})
+puts b = Hash.new
+puts '------------ END ------------'
+
+
+# Enumerable#injectはブロックを使用して繰り返し計算を行います。
+# injectには以下のような特徴があります。
+
+# 引数を省略した場合は、要素1がブロック引数の1番目に渡されます。
+# 引数を指定した場合は、その値が初期値になります。
+# ブロック引数の1番目は前回の戻り値が渡されます。初回は、初期値が渡されます。
+# ブロック引数の2番目は要素が順番に渡されます。
+puts '----------- 597行目 -----------'
+p [1, 2, 3].inject{|x, y| x + y ** 2} rescue p $!
+p [1, 2, 3].inject(0){|x, y| x + y ** 2} rescue p $!
+p [1, 2, 3].inject([]){|x, y| x << y ** 2} rescue p $!
+p [1, 2, 3].inject do|x, y| x + y ** 2 end rescue p $!
+puts '------------ END ------------'
+
+# "r":	読込専用ファイル
+# "r+":	読込/書き込み用
+# "w":	書き込み専用。ファイルがなければ新規作成、既に存在する場合はファイルサイズを0にする
+# "w+":	読込/書き込み用。その他は"w"と同じ
+# "a":	追加書き込み専用。ファイルがなければ新規作成
+# "a+":	読込/追加書き込み専用。ファイルがなければ新規作成
+puts '----------- 611行目 -----------'
+File.open('textfile.txt', "r+") do |f|
+  data = f.read.upcase
+  f.rewind
+  f.puts data
+end
+puts '------------ END ------------'
+
+# 問題のコードは";|:"を区切り文字に指定されているため、例えば"1;|:2"であれば[1, 2]になります。
+# 異なる区切り文字を複数指定する場合は正規表現を用います。
+# [1, 2, 3, 4]を得るためには、"1;2:3;4".split(/;|:/)とします。
+puts '----------- 626行目 -----------'
+str = "1;2:3;4"
+p str.split(";|:")
+p str.split(/;|:/)
+puts '------------ END ------------'
+
+
+# String.to_aはない
+puts '----------- 631行目 -----------'
+# hoge = "a".to_a # => エラー
+# puts hoge.class
+puts '------------ END ------------'
+
+
+# foo (2) * 2はメソッド名と引数の間に空白があるため、foo((2) * 2)が呼ばれたと解釈されます。
+puts '----------- 642行目 -----------'
+def foo(n)
+  n ** n
+end
+
+puts foo (2) * 2 # => foo((2) * 2)
+puts foo(2) * 2 # => foo(2) * 2
+puts '------------ END ------------'
+
+
+# Hash#to_aはキーと値の2要素の配列を並べた配列を作成し、返します。
+puts '----------- 652行目 -----------'
+h = {a: 100, b: 200}
+p a = h.to_a
+p a
+p a.to_h
+puts '------------ END ------------'
+
+
+puts '----------- 662行目 -----------'
+h = {a: 100, b: 200}
+h.each {|p|
+  p p
+}
+puts '------------ END ------------'
+
+
+# String#==(other)はotherが文字列の場合は、String#eql?と同じ結果を返します。
+# otherが文字列以外の場合は、other.to_sの結果と比較します。
+# String#eql?は同一文字列の場合にtrueを返します。
+# ただし、自作クラスの場合はObject#eql?をオーバーライドする必要があります。
+# さもなければ、同一の内容であるにもかかわらず、オブジェクトIDが異なるためfalseになります。
+puts '----------- 670行目 -----------'
+a1 = "abc"
+a2 = 'abc'
+
+print a1.eql? a2
+print a1 == a2
+puts '------------ END ------------'
+
+
+# unlessは条件が成立しない場合に中の処理が実行されます。
+# elseを用いることはできますが、elsifを用いることはできません。
+puts '----------- 684行目 -----------'
+# def hoge(n)
+#   unless n != 3
+#     "hello"
+#   elsif n == 5
+#     "world"
+#   end
+# end
+
+# str = ''
+# str.concat hoge(3)
+# str.concat hoge(5)
+
+# puts str
+puts '------------ END ------------'
+
+# Array#flattenはselfを再帰的に平坦化します(3次元配列を1次元配列の配列を返す)。
+# Array#flatten!は破壊的にselfを再帰的に平坦化します。平坦化が行われない場合は、nilを返します。
+# String#reverseはselfを逆順にした配列を返します。
+# %||は%記法といいます。文字列リテラル等を定義することができます。
+# 詳しい説明は%記法を参照してください。
+puts '----------- 703行目 -----------'
+# arr = ["apple", "banana", "orange"].flatten!
+arr = [["apple", 001],["banana"],["orange"]].flatten
+# arr = ["apple", "banana", "orange"].reverse
+# arr = %|apple banana orange|
+arr.each do |i|
+  puts i
+end
+puts '------------ END ------------'
+
+# Rubyではメソッド内で定数を定義することができません。
+# 複数回メソッドを呼び出した場合に、定数が不定となるため定義できません。
+# 宣言された場合は、SyntaxErrorが発生します。
+puts '----------- 718行目 -----------'
+# def hoge
+#   x = 10
+#   Y = x < 10 ? "C" : "D"
+#   puts Y
+# end
+# hoge
+puts '------------ END ------------'
+
+
+puts '----------- 729行目 -----------'
+hoge = *"a"
+puts hoge.class
+puts '------------ END ------------'
